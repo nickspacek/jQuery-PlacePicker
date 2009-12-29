@@ -1,5 +1,6 @@
 .ui-placepicker {
     padding: 0 .25em;
+    position: relative;
 }
 
 .ui-placepicker-wrapper {
@@ -27,6 +28,7 @@
     right: 0;
     padding: 0 .25em;
     max-width: 75%;
+    z-index: 10000;
 }
 
 .ui-placepicker-result-location {
