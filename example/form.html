@@ -39,12 +39,30 @@ $( function () {
 <body>
   <div id="placepicker" style="width: 400px"></div>
   <div id="map-canvas" style="width: 400px; height: 300px"></div>
+  
+  <h1>Information Entered:</h1>
+  <p><i>Note: These are often hidden fields</i></p>
   <form>
-    <input type="text" name="city" />
-    <input type="text" name="province" />
-    <input type="text" name="country" />
-    <input type="text" name="lat" />
-    <input type="text" name="lng" />
+    <ol>
+        <label for="city">City</label>
+        <input type="text" id="city" name="city" />
+    </ol>
+    <ol>
+        <label for="province">Province</label>
+        <input type="text" id="province" name="province" />
+    </ol>
+    <ol>
+        <label for="country">Country</label>
+        <input type="text" id="country" name="country" />
+    </ol>
+    <ol>
+        <label for="lat">Lat</label>
+        <input type="text" id="lat" name="lat" />
+    </ol>
+    <ol>
+        <label for="lng">Lng</label>
+        <input type="text" id="lng" name="lng" />
+    </ol>
   </form>
 </body>
 
