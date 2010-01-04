@@ -56,7 +56,6 @@
                         } )
                     .click( function ( e ) {
                         e.preventDefault();
-                        console.debug( 'current link clicked' );
                         
 		                self._setView( 'search' );
                     } )
@@ -82,7 +81,6 @@
 	                .keypress( function( event ) {
 		                if( event.keyCode == 13 ) {
 			                event.preventDefault();
-			                console.debug( 'enter pressed in input' );
 			                
 			                self.search( this.value, event );
 		                }
@@ -94,7 +92,6 @@
                     .html( text.searchText )
                     .click( function ( event ) {
                         event.preventDefault();
-                        console.debug( 'search button clicked' );
                         
                         self.search( uiSearchInput.val(), event );
                     } )
@@ -106,7 +103,6 @@
                     .html( text.cancelText )
                     .click( function ( event ) {
 		                event.preventDefault();
-		                console.debug( 'cancel link clicked' );
 		                
 		                self._trigger( 'cancel', event );
 		                
@@ -149,7 +145,6 @@
                     .html( text.saveText )
                     .click( function ( event ) {
 	                    event.preventDefault();
-	                    console.debug( 'save button clicked' );
 
                         var result = self._getData( 'result' );
 
@@ -220,9 +215,6 @@
         },
         
         _geocodeCallback: function ( response, status ) {
-            console.dir( status );
-            console.dir( response );
-            
             if ( status == this.service.geocoder.StatusOK ) {
                 var location = this.service.geocoder.locationFromResponse( response );
                 this._setData( 'result', location );
