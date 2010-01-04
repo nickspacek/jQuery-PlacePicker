@@ -13,7 +13,7 @@
                 }
             }
             if ( options.initialLocation ) {
-                if ( !isCompleteLocation( options.initialLocation ) ) {
+                if ( !self.isCompleteLocation( options.initialLocation ) ) {
                     throw 'Initial location is not complete.';
                 }
                 self.setLocation( options.initialLocation );
@@ -360,7 +360,7 @@
         },
         
         _ajaxSubmit: function ( url, data ) {
-            var obj = this._flattenLocation( data );
+            var obj = this._flatten( data );
             
             $.ajax( {
                 type: 'POST',
