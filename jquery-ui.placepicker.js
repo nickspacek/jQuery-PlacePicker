@@ -177,7 +177,8 @@
         },
         
         formatLocation: function ( location, fields ) {
-            var format_fields = fields || [ 'city', 'province', 'country' ];
+            var format_fields = fields && fields.length ? fields
+                : [ 'city', 'province', 'country' ];
             
             return $.map( $.grep( format_fields, function ( n, i ) {
                 return location[ n ] !== undefined;
@@ -186,9 +187,9 @@
             } ).join( ', ' );
         },
         
-        getFormattedLocation: function () {
+        getFormattedLocation: function ( fields ) {
             var location = this.getLocation();
-            return location ? this.formatLocation( location ) : '';
+            return location ? this.formatLocation( location, fields ) : '';
         },
         
         getLocation: function () {
@@ -404,7 +405,8 @@
             }
         },
         regional: [],
-        services: {}
+        services: {},
+        getter: 'getFormattedLocation formatLocation'
     } );
     
     $.ui.placepicker.regional[''] = {
