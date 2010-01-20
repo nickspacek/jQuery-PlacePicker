@@ -57,7 +57,7 @@
                     .click( function ( e ) {
                         e.preventDefault();
                         
-		                self._setView( 'search' );
+		                self.setView( 'search' );
                     } )
                     .appendTo( uiWrapper ) ),
                     
@@ -114,7 +114,7 @@
 		                    self.service.map.panTo( latlng );
 		                }
 		                
-		                self._setView( 'default' );
+		                self.setView( 'default' );
 	                } )
                     .appendTo( uiSearcherSpan ) ),
                     
@@ -171,7 +171,7 @@
 	                    
 	                    uiSearchInput.val( formattedLocation );
 	                    uiCurrentAddressSpan.html( formattedLocation );
-                        self._setView( 'default' );
+                        self.setView( 'default' );
                     } )
                     .appendTo( uiResultSuccess ) );
         },
@@ -202,7 +202,7 @@
         search: function ( query, event ) {
             var self = this;
             
-            self._setView( 'search' );
+            self.setView( 'search' );
             
             self._trigger( 'search', event, { query: query } );
             
@@ -268,7 +268,7 @@
             }
         },
         
-        _setView: function ( view ) {
+        setView: function ( view ) {
             switch ( view ) {
                 case 'default':
                     this.uiSearcherSpan.hide();
@@ -312,7 +312,7 @@
             this.service.map.createMarker( 'location',
                 this.options.locationMarker );
             
-            if ( this.getLocation() ) {
+            if ( this.getLocation() && this.getLocation().latlng ) {
                 this._initMap();
             }
         },
@@ -379,8 +379,10 @@
         },
         
         _copyObjectToForm: function ( object, form ) {
+            var self = this;
             $.each( this._flatten( object ), function ( key, val ) {
-                form.find( '[name=' + key + ']' ).val( val );
+                var selector = self.options.formSelectors[key];
+                form.find( selector ).val( val );
             } );
         }
     } );
@@ -406,7 +408,7 @@
         },
         regional: [],
         services: {},
-        getter: 'getFormattedLocation formatLocation'
+        getter: 'getFormattedLocation formatLocation getLocation'
     } );
     
     $.ui.placepicker.regional[''] = {
