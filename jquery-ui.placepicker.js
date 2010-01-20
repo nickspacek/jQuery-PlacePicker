@@ -57,7 +57,7 @@
                     .click( function ( e ) {
                         e.preventDefault();
                         
-		                self._setView( 'search' );
+		                self.setView( 'search' );
                     } )
                     .appendTo( uiWrapper ) ),
                     
@@ -114,7 +114,7 @@
 		                    self.service.map.panTo( latlng );
 		                }
 		                
-		                self._setView( 'default' );
+		                self.setView( 'default' );
 	                } )
                     .appendTo( uiSearcherSpan ) ),
                     
@@ -171,13 +171,14 @@
 	                    
 	                    uiSearchInput.val( formattedLocation );
 	                    uiCurrentAddressSpan.html( formattedLocation );
-                        self._setView( 'default' );
+                        self.setView( 'default' );
                     } )
                     .appendTo( uiResultSuccess ) );
         },
         
         formatLocation: function ( location, fields ) {
-            var format_fields = fields || [ 'city', 'province', 'country' ];
+            var format_fields = fields && fields.length ? fields
+                : [ 'city', 'province', 'country' ];
             
             return $.map( $.grep( format_fields, function ( n, i ) {
                 return location[ n ] !== undefined;
@@ -186,9 +187,9 @@
             } ).join( ', ' );
         },
         
-        getFormattedLocation: function () {
+        getFormattedLocation: function ( fields ) {
             var location = this.getLocation();
-            return location ? this.formatLocation( location ) : '';
+            return location ? this.formatLocation( location, fields ) : '';
         },
         
         getLocation: function () {
@@ -201,7 +202,7 @@
         search: function ( query, event ) {
             var self = this;
             
-            self._setView( 'search' );
+            self.setView( 'search' );
             
             self._trigger( 'search', event, { query: query } );
             
@@ -267,7 +268,7 @@
             }
         },
         
-        _setView: function ( view ) {
+        setView: function ( view ) {
             switch ( view ) {
                 case 'default':
                     this.uiSearcherSpan.hide();
@@ -311,7 +312,7 @@
             this.service.map.createMarker( 'location',
                 this.options.locationMarker );
             
-            if ( this.getLocation() ) {
+            if ( this.getLocation() && this.getLocation().latlng ) {
                 this._initMap();
             }
         },
@@ -378,8 +379,10 @@
         },
         
         _copyObjectToForm: function ( object, form ) {
+            var self = this;
             $.each( this._flatten( object ), function ( key, val ) {
-                form.find( '[name=' + key + ']' ).val( val );
+                var selector = self.options.formSelectors[key];
+                form.find( selector ).val( val );
             } );
         }
     } );
@@ -404,7 +407,8 @@
             }
         },
         regional: [],
-        services: {}
+        services: {},
+        getter: 'getFormattedLocation formatLocation getLocation'
     } );
     
     $.ui.placepicker.regional[''] = {
