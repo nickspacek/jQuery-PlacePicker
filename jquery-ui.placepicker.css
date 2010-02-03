@@ -1,0 +1,51 @@
+.ui-placepicker {
+	padding: 0 .25em;
+	position: relative;
+}
+
+.ui-placepicker-wrapper {
+	width: 100%;
+	overflow: hidden;
+}
+
+.ui-placepicker-wrapper label {
+	float: left;
+	padding: 5px 0 5px 0;
+	margin-right: .25em;
+}
+
+.ui-placepicker-currentaddress {
+	float: left;
+	position: relative;
+	padding: 2px .4em 2px 10px;
+}
+
+.ui-placepicker-currentaddress-multi span {
+	display: block;
+	font-size: .85em;
+}
+
+.ui-placepicker-currentaddress span.ui-icon {
+	position: absolute;
+	left: .2em;
+	top: 50%;
+	margin: -8px 5px 0px 0px;
+}
+
+.ui-placepicker-result, ui-placepicker-notice {
+	position: absolute;
+	right: 0;
+	padding: 0 .25em;
+	max-width: 75%;
+	z-index: 10000;
+}
+
+.ui-placepicker-result-location {
+	font-size: .75em;
+	font-style: italic;
+}
+
+.ui-placepicker-searchinput {
+	font-size: .85em;
+	width: 20em;
+}
