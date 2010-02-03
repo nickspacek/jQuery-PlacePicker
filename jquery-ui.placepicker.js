@@ -61,9 +61,17 @@
 					} )
 					.appendTo( uiWrapper ) ),
 					
+				uiCurrentAddressWrapper = ( self.uiCurrentAddressWrapper =
+					$( '<div />' )
+						.addClass( 'ui-placepicker-currentaddress' )
+						.appendTo( uiCurrentLink ) ),
+				
+				uiCurrentStreetAddressSpan = ( self.uiCurrentStreetAddressSpan =
+					$( '<span />' )
+						.appendTo( uiCurrentAddressWrapper ) ),
+				
 				uiCurrentAddressSpan = ( self.uiCurrentAddressSpan = $( '<span />' )
-					.html( locationText )
-					.appendTo( uiCurrentLink ) ),
+					.appendTo( uiCurrentAddressWrapper ) ),
 					
 				uiCurrentButtonSpan = ( self.uiCurrentButtonSpan = $( '<span />' )
 					.addClass( 'ui-icon ui-icon-home' )
@@ -171,13 +179,35 @@
 							self._copyObjectToForm( result, options.form );
 						}
 
-						var formattedLocation = self.getFormattedLocation();
+						var formattedLocation = self.getFormattedLocation( {
+							fields: [ 'city', 'province', 'country' ]
+						} );
+						var street = result.street;
 						
 						uiSearchInput.val( formattedLocation );
-						uiCurrentAddressSpan.html( formattedLocation );
+						self._setLocationText();
+						
 						self.setView( 'default' );
 					} )
 					.appendTo( uiResultSuccess ) );
+			
+			self._setLocationText();
+		},
+		
+		_setLocationText: function () {
+			var locationText = this.getLocation()
+				? this.getFormattedLocation( {
+					fields: [ 'city', 'province', 'country' ]
+				} ) : text.noLocationText;
+			var streetText = this.getLocation() && this.getLocation().street
+				? this.getLocation().street : undefined;
+
+			this.uiCurrentAddressSpan.html( locationText );
+			this.uiCurrentAddressWrapper.toggleClass( 'ui-placepicker-currentaddress-multi',
+				streetText && streetText.length ? true : false );
+			this.uiCurrentStreetAddressSpan
+				.toggle( streetText && streetText.length ? true : false )
+				.html( streetText || '' )
 		},
 		
 		formatLocation: function ( location, options ) {
