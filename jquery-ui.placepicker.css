@@ -44,3 +44,8 @@
 	font-size: .75em;
 	font-style: italic;
 }
+
+.ui-placepicker-searchinput {
+	font-size: .85em;
+	width: 20em;
+}
