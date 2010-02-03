@@ -180,9 +180,8 @@
 						}
 
 						var formattedLocation = self.getFormattedLocation( {
-							fields: [ 'city', 'province', 'country' ]
+							fields: [ 'street', 'city', 'province', 'country' ]
 						} );
-						var street = result.street;
 						
 						uiSearchInput.val( formattedLocation );
 						self._setLocationText();
