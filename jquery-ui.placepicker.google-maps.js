@@ -83,7 +83,7 @@
 	$.extend( Geocoder.prototype, {
 		StatusOK: google.maps.GeocoderStatus.OK,
 		
-		geocode: function ( query, callback ) {console.dir(arguments);
+		geocode: function ( query, callback ) {
 			if ( query.latlng ) {
 				query.latLng = new google.maps.LatLng( query.latlng.lat,
 					query.latlng.lng );
@@ -116,7 +116,7 @@
 				if ( nonpol.length == 0 )  {
 					return true;
 				}
-				var type = nonpol[0];console.debug(type, this);
+				var type = nonpol[0];
 				switch ( type ) {
 					case 'street_number':
 						street.number = this.long_name;
@@ -144,8 +144,6 @@
 				lat: responseItem.geometry.location.lat(),
 				lng: responseItem.geometry.location.lng()
 			};
-						
-			console.debug( 'location', location );
 			
 			return location;
 		},
