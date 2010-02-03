@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <title>Form Example</title>
@@ -15,29 +15,50 @@
 <!-- Include support for Google Maps; required for the Geocoder -->
 <script type="text/javascript" src="../jquery-ui.placepicker.google-maps.js"></script>
 
+<!-- Just some styling to make a crosshair pointer -->
+<style type="text/css">
+#map-canvas div div div img {
+	cursor: crosshair !important;
+}
+</style>
+
 <script type="text/javascript">
 $( function () {
   // Initialize Google Map
   var map = new google.maps.Map( $( '#map-canvas' )[0], {
     zoom: 8,
     center: new google.maps.LatLng( 45.95919025, -66.640351 ),
-    mapTypeId: google.maps.MapTypeId.ROADMAP
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+	
+	// move the navigation controls to make room for the placepicker
+	navigationControlOptions: {
+		position: google.maps.ControlPosition.LEFT
+	},
+	mapTypeControl: false
   } );
   
-  var pp = $( '#placepicker' ).placepicker( {
+  // Creating the div in here to avoid it popping up outside the map when the page loads
+  var pp = $( '<div />' ).placepicker( {
     map: map,
     
     // Form parameter is a jQuery object that has named fields for the
     // location info to be saved in (normally hidden)
-    form: $( 'form' )
+    form: $( 'form' ),
+	
+	// Clickable lets you click places on the map
+	clickable: true
   } );
+  
+  // If there are any other controls in this position, ours comes first!
+  pp[0].index = -1;
+  
+  map.controls[ google.maps.ControlPosition.TOP_LEFT ].push( pp[0] );
 } );
 </script>
 
 </head>
 
 <body>
-  <div id="placepicker" style="width: 500px"></div>
   <div id="map-canvas" style="width: 500px; height: 300px"></div>
   
   <h1>Information Entered:</h1>

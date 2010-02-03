@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
-<title>Basic Example</title>
+<title>Form Example</title>
 
 <link href="css/jquery-ui-1.7.2.css" type="text/css" rel="stylesheet" />
 <link href="../jquery-ui.placepicker.css" type="text/css" rel="stylesheet" />
@@ -15,6 +15,13 @@
 <!-- Include support for Google Maps; required for the Geocoder -->
 <script type="text/javascript" src="../jquery-ui.placepicker.google-maps.js"></script>
 
+<!-- Just some styling to make a crosshair pointer -->
+<style type="text/css">
+#map-canvas div div div img {
+	cursor: crosshair !important;
+}
+</style>
+
 <script type="text/javascript">
 $( function () {
   // Initialize Google Map
@@ -26,16 +33,13 @@ $( function () {
   
   var pp = $( '#placepicker' ).placepicker( {
     map: map,
-    // 'saved' event happens when the save button is clicked
-    saved: function ( e, result ) {
-      var text = [
-        result.location.city,
-        result.location.province,
-        result.location.country
-      ].join( ', ' );
-      
-      $( '#text' ).html( text );
-    }
+    
+    // Form parameter is a jQuery object that has named fields for the
+    // location info to be saved in (normally hidden)
+    form: $( 'form' ),
+	
+	// Clickable lets you click places on the map
+	clickable: true
   } );
 } );
 </script>
@@ -45,7 +49,40 @@ $( function () {
 <body>
   <div id="placepicker" style="width: 500px"></div>
   <div id="map-canvas" style="width: 500px; height: 300px"></div>
-  <p>You saved: <span id="text">Nothing yet</span></p>
+  
+  <h1>Information Entered:</h1>
+  <p><i>Note: These are often hidden fields</i></p>
+  <form>
+	<ol>
+        <label for="street">Street</label>
+        <input type="text" id="street" name="street" />
+    </ol>
+    <ol>
+        <label for="city">City</label>
+        <input type="text" id="city" name="city" />
+    </ol>
+    <ol>
+        <label for="province">Province</label>
+        <input type="text" id="province" name="province" />
+    </ol>
+    <ol>
+        <label for="country">Country</label>
+        <input type="text" id="country" name="country" />
+    </ol>
+	<ol>
+        <label for="postal_code">Postal Code</label>
+        <input type="text" id="postal_code" name="postal_code" />
+    </ol>
+    <ol>
+        <label for="lat">Lat</label>
+        <input type="text" id="lat" name="lat" />
+    </ol>
+    <ol>
+        <label for="lng">Lng</label>
+        <input type="text" id="lng" name="lng" />
+    </ol>
+  </form>
+
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
