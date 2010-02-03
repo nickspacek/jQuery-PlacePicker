@@ -163,6 +163,11 @@
 						}
 						
 						if ( options.form ) {
+							options.form.find( ':input' )
+								.not( ':button, :submit, :reset, :hidden' )
+								.val( '' )
+								.removeAttr( 'checked' )
+								.removeAttr( 'selected' );
 							self._copyObjectToForm( result, options.form );
 						}
 
@@ -407,6 +412,7 @@
 			formSelectors: {
 				street: '[name=street]',
 				city: '[name=city]',
+				postal_code: '[name=postal_code]',
 				province: '[name=province]',
 				country: '[name=country]',
 				lat: '[name=lat]',

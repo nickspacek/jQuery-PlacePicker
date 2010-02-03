@@ -133,6 +133,9 @@
 						break;
 					case 'country':
 						location.country = this.long_name;
+						break;
+					case 'postal_code':
+						location.postal_code = this.long_name;
 				}
 				
 				if ( street.name && street.number ) {
