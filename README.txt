@@ -1,4 +1,4 @@
-jQuery PlacePicker
+jQuery PlacePicker - 20100203
 =====================
 
 This plugin provides a widget that can be used with a geocoding service (and
@@ -41,11 +41,13 @@ You can apply the plugin like this: $( '#placepicker' ).placepicker( {
   // ex: enable form fill
   form: $( 'form' ) // this parameter is a jQuery object containing the form
 
+  // ex: make map clickable to select location
+  clickable: true
+
 } );
 
 Issues
 ---------------
-* Support street addresses
 * Better location detail parsing (in Google Plugin; they need to standardize
  their geocoder response!)
 
