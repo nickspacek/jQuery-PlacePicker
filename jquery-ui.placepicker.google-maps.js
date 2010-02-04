@@ -149,7 +149,7 @@
 			};
 			
 			return location;
-		},
+		}
 	} );
 
 	$.extend( $.ui.placepicker, {
