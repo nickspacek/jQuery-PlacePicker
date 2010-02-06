@@ -424,6 +424,9 @@
 				var selector = self.options.formSelectors[key];
 				form.find( selector ).val( val );
 			} );
+			form.find( self.options.formSelectors.geo ).val(
+				object.latlng.lat + ';' + object.latlng.lng
+			);
 		}
 	} );
 
@@ -445,7 +448,8 @@
 				province: '[name=province]',
 				country: '[name=country]',
 				lat: '[name=lat]',
-				lng: '[name=lng]'
+				lng: '[name=lng]',
+				geo: '[name=geo]'
 			}
 		},
 		regional: [],
