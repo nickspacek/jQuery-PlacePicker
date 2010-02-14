@@ -20,14 +20,13 @@
 			}
 			
 			// TODO: break out service init
-			self.service = {};
 			if ( options.map ) { // TODO: move this to _setData?
-				self._loadMapService();
+				self._loadMapEngine();
 				self.lastMapLocation = {
-					latlng: self.service.map.getCenter()
+					latlng: self.map.getCenter()
 				};
 			}
-			self._loadGeocoderService();
+			self._loadGeocoderEngine();
 			
 			var locationText = self.getLocation()
 				? self.getFormattedLocation() : text.noLocationText;
@@ -117,9 +116,9 @@
 						if ( options.map ) {
 							var latlng = ( self.getLocation()
 								|| self.lastMapLocation ).latlng;
-							
-							self.service.map.hideMarker( 'result' );
-							self.service.map.panTo( latlng );
+
+							self.map.hideMarker( self.resultMarker );
+							self.map.panTo( latlng );
 						}
 						
 						self.setView( 'default' );
@@ -166,8 +165,8 @@
 						self._trigger( 'saved', event, { location: result } );
 						
 						if ( options.map ) {
-							self.service.map.hideMarker( 'result' );
-							self.service.map.showMarker( 'location', result.latlng );
+							self.map.hideMarker( self.resultMarker );
+							self.map.showMarker( self.locationMarker, result.latlng );
 						}
 						
 						if ( options.form ) {
@@ -250,22 +249,22 @@
 		},
 		
 		geocode: function ( query, callback ) {
-			this.service.geocoder.geocode( query, callback );
+			this.geocoder.geocode( query, callback );
 		},
 		
 		_geocodeCallback: function ( response, status ) {
-			if ( status == this.service.geocoder.StatusOK ) {
-				var location = this.service.geocoder.locationFromResponse( response );
+			if ( status == this.geocoder.StatusOK ) {
+				var location = this.geocoder.locationFromResponse( response );
 				this._setData( 'result', location );
 				
 				var is_complete = this.isCompleteLocation( location );
 
 				if ( this.options.map ) {
-					this.service.map.panTo( location.latlng );
+					this.map.panTo( location.latlng );
 					if ( location.street ) {
-						this.service.map.zoom( $.ui.placepicker.zoom.STREET );
+						this.map.zoom( $.ui.placepicker.zoom.STREET );
 					}
-					this.service.map.showMarker( 'result', location.latlng );
+					this.map.showMarker( this.resultMarker, location.latlng );
 				}
 				
 				this._trigger( 'response', null, {
@@ -327,69 +326,59 @@
 			}
 		},
 		
-		_loadMapService: function () {
+		_loadMapEngine: function () {
 			var self = this;
-			var service = this.options.mapService;
+			var engine = self.options.mapEngine;
 			
-			if ( service === undefined ) {
+			if ( engine === undefined ) {
 				// TODO: Auto-detect map type
-				service = self._firstKey( $.ui.placepicker.services.map );
-				if ( !service ) {
-					throw 'No map services were registered.'
+				engine = $.ui.placepicker.map[0];
+				if ( !engine ) {
+					throw 'No map engines were registered.'
 				}
 			}
-			else if ( $.ui.placepicker.services.map[service] === undefined ) {
-				throw 'The ' + service + ' map service was not registered.';
+			else if ( $.ui.placepicker.map[engine] === undefined ) {
+				throw 'The ' + engine + ' map engine was not registered.';
 			}
 
 			var map = self.options.map;
-			self.service.map = new $.ui.placepicker.services.map[service]( {
+			self.map = new engine( {
 				placepicker: self,
 				map: map,
 				click: self.options.clickable
 					? function ( latlng ) { self.search( latlng ) } : undefined
 			} );
-		   
-			this.service.map.createMarker( 'result', this.options.resultMarker );
-			this.service.map.createMarker( 'location',
-				this.options.locationMarker );
+
+			self.resultMarker = self.map.createMarker( self.options.resultMarker );
+			self.locationMarker = self.map.createMarker( self.options.locationMarker );
 			
-			if ( this.getLocation() && this.getLocation().latlng ) {
-				this._initMap();
+			if ( self.getLocation() && self.getLocation().latlng ) {
+				self._initMap();
 			}
 		},
 		
 		_initMap: function () {
-			this.service.map.showMarker( 'location', this.getLocation().latlng );
-			this.service.map.panTo( this.getLocation().latlng );
+			this.map.showMarker( this.locationMarker, this.getLocation().latlng );
+			this.map.panTo( this.getLocation().latlng );
 		},
 		
-		_loadGeocoderService: function () {
-			var service = this.options.geocoderService;
+		_loadGeocoderEngine: function () {
+			var engine = this.options.geocoderEngine;
 			
-			if ( service === undefined ) {
-				service = this._firstKey( $.ui.placepicker.services.geocoder );
-				if ( !service ) {
-					throw 'No geocoder services were registered.'
+			if ( engine === undefined ) {
+				engine = $.ui.placepicker.geocoder[0];
+				if ( !engine ) {
+					throw 'No geocoder engines were registered.'
 				}
 			}
-			else if ( this.services.geocoder[service] === undefined ) {
-				throw 'The ' + service + ' geocoder service was not registered.';
+			else if ( $.ui.placepicker.geocoder[engine] === undefined ) {
+				throw 'The ' + engine + ' geocoder engine was not registered.';
 			}
 			
-			this.service.geocoder =
-				new $.ui.placepicker.services.geocoder[service]( {
+			this.geocoder =
+				new engine( {
 					placepicker: this
 				} );
-		},
-		
-		_firstKey: function ( obj ) {
-			var first;
-			$.each( obj, function ( index, item ) {
-				first = index;
-				return false;
-			} );
-			return first;
 		},
 		
 		_ajaxSubmit: function ( url, data ) {
@@ -424,6 +413,9 @@
 				var selector = self.options.formSelectors[key];
 				form.find( selector ).val( val );
 			} );
+			form.find( self.options.formSelectors.geo ).val(
+				object.latlng.lat + ';' + object.latlng.lng
+			);
 		}
 	} );
 
@@ -445,11 +437,12 @@
 				province: '[name=province]',
 				country: '[name=country]',
 				lat: '[name=lat]',
-				lng: '[name=lng]'
+				lng: '[name=lng]',
+				geo: '[name=geo]'
 			}
 		},
 		regional: [],
-		services: {},
+		engines: {},
 		zoom: {
 			STREET: 0
 		},
@@ -465,5 +458,43 @@
 		searchText: 'Search',
 		saveText: 'Save'
 	};
-
+	
+	function Geocoder () {}
+	$.extend( Geocoder.prototype, {
+		geocode: function ( query, callback ) {
+			throw 'Geocoders must implement the "geocode" function.';
+		}
+	} );
+	
+	function Map () {}
+	$.extend( Map.prototype, {
+		panTo: function ( latlng ) {
+			throw 'Maps must implement the "panTo" function.';
+		},
+		
+		zoom: function ( zoom ) {
+			throw 'Maps must implement the "zoom" function.';
+		},
+		
+		getCenter: function () {
+			throw 'Maps must implement the "getCenter" function.';
+		},
+		
+		createMarker: function ( marker ) {
+			throw 'Maps must implement the "createMarker" funciton.';
+		},
+		
+		showMarker: function ( marker, latlng ) {
+			throw 'Maps must implement the "showMarker" function.';
+		},
+		
+		hideMarker: function ( marker ) {
+			throw 'Maps must implement the "hideMarker" function.';
+		},
+	} );
+	
+	$.ui.placepicker.Geocoder = Geocoder;
+	$.ui.placepicker.Map = Map;
+	$.ui.placepicker.geocoder = new Array();
+	$.ui.placepicker.map = new Array();
 } ) ( jQuery );

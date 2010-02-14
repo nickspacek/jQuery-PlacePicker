@@ -1,6 +1,6 @@
 
 ( function ( $ ) {
-	function Map ( options ) {
+	function GoogleMap ( options ) {
 		var self = this;
 		self.options = options;
 		self.zoom[ $.ui.placepicker.zoom.STREET ] = 14;
@@ -12,11 +12,10 @@
 		}
 	}
 	
-	$.extend( Map.prototype, {
-		markers: [],
+	$.extend( GoogleMap.prototype, $.ui.placepicker.Map.prototype,  {
 		defaults: {
 			marker: {
-				
+				visible: false
 			}
 		},
 		
@@ -28,21 +27,40 @@
 			options.map.setZoom( this.zoom[ zoom ] );
 		},
 		
-		showMarker: function ( name, latlng ) {
-			var position = new google.maps.LatLng( latlng.lat, latlng.lng );
-			var marker = this._getMarker( name, {
-				position: position,
-				map: options.map,
-				visible: true
-			} );
+		createMarker: function ( options ) {
+			options = this._normalizeOptions( options );
+			
+			options._googleMarker = new google.maps.Marker( options );
+			return options;
 		},
 		
-		hideMarker: function ( name ) {
-			var marker = this.markers[name];
-			if ( !marker ) {
-				return;
+		showMarker: function ( marker, latlng ) {
+			marker._googleMarker.setPosition( this._getLatLng( latlng ) );
+			marker._googleMarker.setVisible( true );
+		},
+		
+		hideMarker: function ( marker ) {
+			marker._googleMarker.setVisible( false );
+		},
+		
+		updateMarker: function ( marker ) {
+			// TODO: Update changed properties
+			//if ( marker.latlng
+		},
+		
+		_normalizeOptions: function ( options ) {
+			options = $.extend( {}, this.defaults.markers, options );
+			if ( options.latlng ) {
+				options.latlng = this._getLatLng( options.latlng );
+				delete options.latlng;
 			}
-			marker.setVisible( false );
+			options.map = this.options.map;
+			
+			return options;
+		},
+		
+		_getLatLng: function ( latlng ) {
+			return new google.maps.LatLng( latlng.lat, latlng.lng );
 		},
 		
 		getCenter: function () {
@@ -51,36 +69,15 @@
 				lat: latlng.lat(),
 				lng: latlng.lng()
 			};
-		},
-		
-		createMarker: function ( name, options ) {
-			return this._getMarker( name, options );
-		},
-		
-		_getMarker: function ( name, options ) {
-			if ( this.markers[name] !== undefined ) {
-				var marker = this.markers[name];
-				marker.setOptions(options);
-				return marker;
-			}
-
-			return ( this.markers[name] =
-				this._createMarker( options || {} ) );
-		},
-		
-		_createMarker: function ( options ) {
-			$.extend( options, this.defaults.marker );
-			
-			return marker = new google.maps.Marker( options );
 		}
 	} );
 	
-	function Geocoder ( options ) {
+	function GoogleGeocoder ( options ) {
 		this.options = options;
 		this._geocoder = new google.maps.Geocoder();
 	}
 	
-	$.extend( Geocoder.prototype, {
+	$.extend( GoogleGeocoder.prototype, $.ui.placepicker.Geocoder.prototype, {
 		StatusOK: google.maps.GeocoderStatus.OK,
 		
 		geocode: function ( query, callback ) {
@@ -152,14 +149,8 @@
 		}
 	} );
 
-	$.extend( $.ui.placepicker, {
-		services: {
-			map: {
-				google: Map
-			},
-			geocoder: {
-				google: Geocoder
-			}
-		}
-	} );
+	$.ui.placepicker.geocoder.push( GoogleGeocoder );
+	$.ui.placepicker.geocoder[ 'Google' ] = GoogleGeocoder;
+	$.ui.placepicker.map.push( GoogleMap );
+	$.ui.placepicker.map[ 'Google' ] = GoogleMap;
 } )( jQuery );
