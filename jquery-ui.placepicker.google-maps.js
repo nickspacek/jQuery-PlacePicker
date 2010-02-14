@@ -1,6 +1,6 @@
 
 ( function ( $ ) {
-	function Map ( options ) {
+	function GoogleMap ( options ) {
 		var self = this;
 		self.options = options;
 		self.zoom[ $.ui.placepicker.zoom.STREET ] = 14;
@@ -12,7 +12,7 @@
 		}
 	}
 	
-	$.extend( Map.prototype, {
+	$.extend( GoogleMap.prototype, $.ui.placepicker.Map.prototype,  {
 		markers: [],
 		defaults: {
 			marker: {
@@ -75,12 +75,12 @@
 		}
 	} );
 	
-	function Geocoder ( options ) {
+	function GoogleGeocoder ( options ) {
 		this.options = options;
 		this._geocoder = new google.maps.Geocoder();
 	}
 	
-	$.extend( Geocoder.prototype, {
+	$.extend( GoogleGeocoder.prototype, $.ui.placepicker.Geocoder.prototype, {
 		StatusOK: google.maps.GeocoderStatus.OK,
 		
 		geocode: function ( query, callback ) {
@@ -152,14 +152,8 @@
 		}
 	} );
 
-	$.extend( $.ui.placepicker, {
-		services: {
-			map: {
-				google: Map
-			},
-			geocoder: {
-				google: Geocoder
-			}
-		}
-	} );
+	$.ui.placepicker.geocoder.push( GoogleGeocoder );
+	$.ui.placepicker.geocoder[ 'Google' ] = GoogleGeocoder;
+	$.ui.placepicker.map.push( GoogleMap );
+	$.ui.placepicker.map[ 'Google' ] = GoogleMap;
 } )( jQuery );
