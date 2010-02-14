@@ -116,8 +116,8 @@
 						if ( options.map ) {
 							var latlng = ( self.getLocation()
 								|| self.lastMapLocation ).latlng;
-							
-							self.map.hideMarker( 'result' );
+
+							self.map.hideMarker( self.resultMarker );
 							self.map.panTo( latlng );
 						}
 						
@@ -165,8 +165,8 @@
 						self._trigger( 'saved', event, { location: result } );
 						
 						if ( options.map ) {
-							self.map.hideMarker( 'result' );
-							self.map.showMarker( 'location', result.latlng );
+							self.map.hideMarker( self.resultMarker );
+							self.map.showMarker( self.locationMarker, result.latlng );
 						}
 						
 						if ( options.form ) {
@@ -264,7 +264,7 @@
 					if ( location.street ) {
 						this.map.zoom( $.ui.placepicker.zoom.STREET );
 					}
-					this.map.showMarker( 'result', location.latlng );
+					this.map.showMarker( this.resultMarker, location.latlng );
 				}
 				
 				this._trigger( 'response', null, {
@@ -348,10 +348,9 @@
 				click: self.options.clickable
 					? function ( latlng ) { self.search( latlng ) } : undefined
 			} );
-		   
-			self.map.createMarker( 'result', self.options.resultMarker );
-			self.map.createMarker( 'location',
-				self.options.locationMarker );
+
+			self.resultMarker = self.map.createMarker( self.options.resultMarker );
+			self.locationMarker = self.map.createMarker( self.options.locationMarker );
 			
 			if ( self.getLocation() && self.getLocation().latlng ) {
 				self._initMap();
@@ -359,7 +358,7 @@
 		},
 		
 		_initMap: function () {
-			this.map.showMarker( 'location', this.getLocation().latlng );
+			this.map.showMarker( this.locationMarker, this.getLocation().latlng );
 			this.map.panTo( this.getLocation().latlng );
 		},
 		
@@ -481,11 +480,15 @@
 			throw 'Maps must implement the "getCenter" function.';
 		},
 		
-		showMarker: function ( latlng ) {
+		createMarker: function ( marker ) {
+			throw 'Maps must implement the "createMarker" funciton.';
+		},
+		
+		showMarker: function ( marker, latlng ) {
 			throw 'Maps must implement the "showMarker" function.';
 		},
 		
-		hideMarker: function ( name ) {
+		hideMarker: function ( marker ) {
 			throw 'Maps must implement the "hideMarker" function.';
 		},
 	} );
