@@ -105,7 +105,7 @@
 		locationFromItem: function ( responseItem ) {
 			var location = {};
 			var street = {};
-			
+			console.dir(responseItem);
 			$.each( responseItem.address_components, function () {
 				var nonpol = $.grep( this.types, function ( n, i ) {
 					return n != 'political';
@@ -122,6 +122,9 @@
 						street.name = this.long_name;
 						break;
 					case 'locality':
+						location.city = this.long_name;
+						break;
+					// only use this if there isn't already a match; don't know if this is even useful
 					case 'sublocality':
 						location.city = location.city || this.long_name;
 						break;
