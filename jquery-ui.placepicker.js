@@ -170,11 +170,15 @@
 						}
 						
 						if ( options.form ) {
-							options.form.find( ':input' )
-								.not( ':button, :submit, :reset, :hidden' )
-								.val( '' )
-								.removeAttr( 'checked' )
-								.removeAttr( 'selected' );
+							self._copyObjectToForm( {
+								street: '',
+								city: '',
+								country: '',
+								postal_code: '',
+								province: '',
+								latlng: { lat: '', lng: '' },
+								geo: ''
+							}, options.form );
 							self._copyObjectToForm( result, options.form );
 						}
 
