@@ -170,15 +170,11 @@
 						}
 						
 						if ( options.form ) {
-							self._copyObjectToForm( {
-								street: '',
-								city: '',
-								country: '',
-								postal_code: '',
-								province: '',
-								latlng: { lat: '', lng: '' },
-								geo: ''
-							}, options.form );
+							options.form.find( ':input' )
+								.not( ':button, :submit, :reset, :hidden' )
+								.val( '' )
+								.removeAttr( 'checked' )
+								.removeAttr( 'selected' );
 							self._copyObjectToForm( result, options.form );
 						}
 
@@ -494,7 +490,7 @@
 		
 		hideMarker: function ( marker ) {
 			throw 'Maps must implement the "hideMarker" function.';
-		},
+		}
 	} );
 	
 	$.ui.placepicker.Geocoder = Geocoder;
