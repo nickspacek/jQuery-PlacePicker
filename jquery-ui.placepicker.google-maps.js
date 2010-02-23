@@ -105,7 +105,7 @@
 		locationFromItem: function ( responseItem ) {
 			var location = {};
 			var street = {};
-			console.dir(responseItem);
+			
 			$.each( responseItem.address_components, function () {
 				var nonpol = $.grep( this.types, function ( n, i ) {
 					return n != 'political';
