@@ -1,7 +1,28 @@
 ( function ( $ ) {
 
 	$.widget( 'ui.placepicker', {
-		_init: function () {
+		options: {
+			region: '',
+			initialLocation: '',
+			details: null,
+			locationMarker: {
+				icon: 'images/location.png'
+			},
+			resultMarker: {
+				icon: 'images/result.png'
+			},
+			formSelectors: {
+				street: '[name=street]',
+				city: '[name=city]',
+				postal_code: '[name=postal_code]',
+				province: '[name=province]',
+				country: '[name=country]',
+				lat: '[name=lat]',
+				lng: '[name=lng]',
+				geo: '[name=geo]'
+			}
+		},
+		_create: function () {
 			var self = this;
 				options = self.options,
 				text = $.ui.placepicker.regional[ options.region ];
@@ -20,7 +41,7 @@
 			}
 			
 			// TODO: break out service init
-			if ( options.map ) { // TODO: move this to _setData?
+			if ( options.map ) { // TODO: move this to _setOption?
 				self._loadMapEngine();
 				self.lastMapLocation = {
 					latlng: self.map.getCenter()
@@ -153,7 +174,7 @@
 					.click( function ( event ) {
 						event.preventDefault();
 
-						var result = self._getData( 'result' );
+						var result = self.options[ 'result' ];
 
 						if ( options.ajax ) {
 							self._ajaxSubmit( options.ajax, result );
@@ -229,10 +250,10 @@
 		},
 		
 		getLocation: function () {
-			return this._getData( 'location' );
+			return this.options[ 'location' ];
 		},
 		setLocation: function ( location ) {
-			this._setData( 'location', location );
+			this._setOption( 'location', location );
 		},
 		
 		search: function ( query, event ) {
@@ -255,7 +276,7 @@
 		_geocodeCallback: function ( response, status ) {
 			if ( status == this.geocoder.StatusOK ) {
 				var location = this.geocoder.locationFromResponse( response );
-				this._setData( 'result', location );
+				this._setOption( 'result', location );
 				
 				var is_complete = this.isCompleteLocation( location );
 
@@ -418,35 +439,13 @@
 			);
 		}
 	} );
-
+	
 	$.extend( $.ui.placepicker, {
-		defaults: {
-			region: '',
-			initialLocation: '',
-			details: null,
-			locationMarker: {
-				icon: 'images/location.png'
-			},
-			resultMarker: {
-				icon: 'images/result.png'
-			},
-			formSelectors: {
-				street: '[name=street]',
-				city: '[name=city]',
-				postal_code: '[name=postal_code]',
-				province: '[name=province]',
-				country: '[name=country]',
-				lat: '[name=lat]',
-				lng: '[name=lng]',
-				geo: '[name=geo]'
-			}
-		},
 		regional: [],
 		engines: {},
 		zoom: {
 			STREET: 0
-		},
-		getter: 'getFormattedLocation formatLocation getLocation'
+		}
 	} );
 	
 	$.ui.placepicker.regional[''] = {
@@ -490,7 +489,7 @@
 		
 		hideMarker: function ( marker ) {
 			throw 'Maps must implement the "hideMarker" function.';
-		},
+		}
 	} );
 	
 	$.ui.placepicker.Geocoder = Geocoder;
